@@ -11,4 +11,5 @@ func main() {
 	cpus := metrics.GetCPUs()
 	fmt.Printf("Hostname: %s\n", hostname)
 	fmt.Printf("Number of CPUs: %d\n", cpus)
+	metrics.GetMemory()
 }
