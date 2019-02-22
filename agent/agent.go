@@ -14,6 +14,6 @@ func main() {
 	fmt.Printf("Hostname: %s\n", hostname)
 	fmt.Printf("Host OS: %s\n", hostOS)
 	fmt.Printf("Host CPUs: %d\n", cpus)
-	fmt.Printf("Host Memory: %d\n", mem)
+	fmt.Printf("Host Memory: %d MB\n", mem/1024)
 	// metrics.GetMemory()
 }

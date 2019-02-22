@@ -1,9 +1,7 @@
 package metrics
 
 import (
-	"bytes"
-	"fmt"
-	"io"
+	"bufio"
 	"log"
 	"os"
 	"os/exec"
@@ -12,6 +10,7 @@ import (
 	"strings"
 )
 
+// GetMemory get total memory from guest using correct functions depending on which is it running
 func GetMemory() int {
 	var memSize int
 	hostOS := runtime.GOOS
@@ -19,8 +18,9 @@ func GetMemory() int {
 	case "darwin":
 		memSize = darwinGetMemory()
 	case "linux":
-		fmt.Printf("Operating system: %s\n", hostOS)
-		linuxGetMemory()
+		// fmt.Printf("Operating system: %s\n", hostOS)
+		memSize = linuxGetMemory()
+		// memSize = 1
 	}
 	return memSize
 }
@@ -59,20 +59,21 @@ func darwinGetMemory() int {
 
 }
 
-func linuxGetMemory() {
-	getMem := exec.Command("cat", "/proc/info")
-	parseMem1 := exec.Command("grep", "MemTotal:")
-	r, w := io.Pipe()
-	getMem.Stdout = w
-	parseMem1.Stdin = r
-
-	var b2 bytes.Buffer
-	parseMem1.Stdout = &b2
-
-	getMem.Start()
-	parseMem1.Start()
-	getMem.Wait()
-	w.Close()
-	parseMem1.Wait()
-	io.Copy(os.Stdout, &b2)
+func linuxGetMemory() int {
+	file, err := os.Open("/proc/meminfo")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	scanner.Scan()
+	memTotal := scanner.Text()
+	memTotalSplitted := strings.Split(memTotal, ":")
+	memSize := strings.TrimLeft(memTotalSplitted[1], " ")
+	memSizeSplitted := strings.Split(memSize, " ")
+	memSizeInt, err := strconv.ParseUint(memSizeSplitted[0], 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return int(memSizeInt)
 }
