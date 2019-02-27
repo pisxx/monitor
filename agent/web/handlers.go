@@ -10,8 +10,8 @@ import (
 	"github.com/pisxx/monitor/agent/metrics"
 )
 
-// Index - handler for index page
-func Index(w http.ResponseWriter, r *http.Request) {
+// IndexMetrics - handler for index page
+func IndexMetrics(w http.ResponseWriter, r *http.Request) {
 	metrics, err := metrics.GetMetrics()
 	if err != nil {
 		log.Fatal("Something went wrong")

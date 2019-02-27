@@ -4,18 +4,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pisxx/monitor/agent/register"
+
 	"github.com/pisxx/monitor/agent/web"
 )
 
-// // MetricsTempl provides template for metrics
-// const metricsTempl = `{{ .Count }} metrics:
-// {{ range .Metrics }}{
-// 	"Metric": "{{ .Name }}",
-// 	"Value": "{{ .Value }}"
-// },
-// {{ end }}`
-
 func main() {
-	http.HandleFunc("/", web.Index)
+	reg, err := register.Agent()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Print(reg)
+	http.HandleFunc("/", web.IndexMetrics)
+	log.Print("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
