@@ -1,19 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
 
-	"github.com/pisxx/monitor/agent/metrics"
+	"github.com/pisxx/monitor/agent/web"
 )
 
+// // MetricsTempl provides template for metrics
+// const metricsTempl = `{{ .Count }} metrics:
+// {{ range .Metrics }}{
+// 	"Metric": "{{ .Name }}",
+// 	"Value": "{{ .Value }}"
+// },
+// {{ end }}`
+
 func main() {
-	hostname := metrics.GetHostname()
-	hostOS := metrics.GetOS()
-	cpus := metrics.GetCPUs()
-	mem := metrics.GetMemory()
-	fmt.Printf("Hostname: %s\n", hostname)
-	fmt.Printf("Host OS: %s\n", hostOS)
-	fmt.Printf("Host CPUs: %d\n", cpus)
-	fmt.Printf("Host Memory: %d MB\n", mem/1024)
-	// metrics.GetMemory()
+	http.HandleFunc("/", web.Index)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

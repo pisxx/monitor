@@ -2,9 +2,11 @@ package metrics
 
 import (
 	"runtime"
+	"strconv"
 )
 
-func GetCPUs() int {
+// GetCPUs returns cpu count
+func GetCPUs() string {
 	cpus := runtime.NumCPU()
-	return cpus
+	return strconv.Itoa(cpus)
 }

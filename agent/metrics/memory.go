@@ -11,7 +11,7 @@ import (
 )
 
 // GetMemory get total memory from guest using correct functions depending on which is it running
-func GetMemory() int {
+func GetMemory() string {
 	var memSize int
 	hostOS := runtime.GOOS
 	switch hostOS {
@@ -22,7 +22,7 @@ func GetMemory() int {
 		memSize = linuxGetMemory()
 		// memSize = 1
 	}
-	return memSize
+	return strconv.Itoa(memSize)
 }
 
 // func darwinGetMemory() {
@@ -49,7 +49,7 @@ func darwinGetMemory() int {
 		log.Fatal(err)
 	}
 	mem, err := strconv.ParseUint(strings.TrimSpace(string(out)), 10, 64)
-	memKB := int(mem / 1024)
+	memKB := int(mem / 1024 / 1024)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -75,5 +75,5 @@ func linuxGetMemory() int {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return int(memSizeInt)
+	return int(memSizeInt) / 1024 / 1024
 }
