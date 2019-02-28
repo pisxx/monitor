@@ -11,8 +11,8 @@ import (
 
 const registerURL = "https://1iw0vyiwzc.execute-api.us-east-1.amazonaws.com/dev/register"
 
-// Agent - register agent in DynamoDB in AWS
-func Agent() (string, error) {
+// RegisterAgent - register agent in DynamoDB in AWS
+func RegisterAgent(agentIP string) (string, error) {
 
 	message := make(map[string]string)
 
@@ -22,6 +22,7 @@ func Agent() (string, error) {
 	}
 	message["agentID"] = agentID
 	message["agentOS"] = runtime.GOOS
+	message["agentIP"] = agentIP
 
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
