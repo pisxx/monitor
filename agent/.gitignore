@@ -2,3 +2,5 @@
 ../.DS_Store
 agent
 register/aws-register
+register/consul-register
+metrics/net
