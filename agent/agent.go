@@ -17,7 +17,7 @@ func main() {
 	flag.Parse()
 	ipPort := *ip + ":" + *port
 	// fmt.Print(flag.Args())
-	register.ConsulRegister("23", *ip)
+	register.ConsulRegister(*ip)
 	// reg, err := register.RegisterAgent(*ip)
 	// if err != nil {
 	// 	log.Fatal(err)

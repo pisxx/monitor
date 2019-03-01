@@ -8,8 +8,10 @@ import (
 
 const kvPath = "monitor/agents"
 
-func ConsulRegister(agentID string, agentIP string) {
+// ConsulRegister - register Agent in Consul KV store
+func ConsulRegister(agentIP string) {
 	// Get a new client
+	agentID := generateID(10)
 	var config api.Config
 	config.Address = "3.88.101.138:8500"
 	// client, err := api.NewClient(api.DefaultConfig())
@@ -20,6 +22,8 @@ func ConsulRegister(agentID string, agentIP string) {
 
 	// Get a handle to the KV API
 	kv := client.KV()
+
+	// Check if ID already exits
 
 	// PUT a new KV pair
 	// p := &api.KVPair{Key: "monitor/agents", Value: []byte("1000")}
