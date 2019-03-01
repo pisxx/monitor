@@ -1,6 +1,4 @@
 .DS_Store
 ../.DS_Store
-agent
-register/aws-register
-register/consul-register
-metrics/net
+*
+!.go
