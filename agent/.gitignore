@@ -1,9 +1,0 @@
-.DS_Store
-../.DS_Store
-*.zip
-../*/*.zip
-agent
-register/aws-register
-register/consul-register
-metrics/net
-../aws/*.sh
