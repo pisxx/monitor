@@ -17,12 +17,12 @@ func main() {
 	flag.Parse()
 	ipPort := *ip + ":" + *port
 	// fmt.Print(flag.Args())
-	register.ConsulRegister("23", *ip)
-	// reg, err := register.RegisterAgent(*ip)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// log.Print(reg)
+	// register.ConsulRegister("23", *ip)
+	reg, err := register.RegisterAgent(*ip)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Print(reg)
 	http.HandleFunc("/", web.IndexMetrics)
 	log.Printf("Listening on %s", ipPort)
 

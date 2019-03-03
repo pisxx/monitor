@@ -4,10 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"runtime"
+	"strings"
 )
+
+type registerError struct {
+	Message string
+}
 
 const registerURL = "https://1iw0vyiwzc.execute-api.us-east-1.amazonaws.com/dev/register"
 
@@ -16,30 +22,55 @@ func RegisterAgent(agentIP string) (string, error) {
 
 	message := make(map[string]string)
 
-	agentID, err := os.Hostname()
+	Hostname, err := os.Hostname()
 	if err != nil {
-		return "Failed", err
+		panic(err)
 	}
-	message["agentID"] = agentID
-	message["agentOS"] = runtime.GOOS
-	message["agentIP"] = agentIP
+	// message["agentID"] = agentID
+	message["OS"] = runtime.GOOS
+	message["IP"] = agentIP
+	message["Hostname"] = Hostname
 
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
 		return "Failed", err
 	}
-	resp, err := http.Post(registerURL, "application/text", bytes.NewBuffer(messageBytes))
-	defer resp.Body.Close()
+	resp, err := http.Post(registerURL, "application/json", bytes.NewBuffer(messageBytes))
 	if err != nil {
 		return "Failed", err
+	}
+	defer resp.Body.Close()
+
+	if err != nil {
+		return "error", err
+	}
+
+	// return string(body), nil
+	if resp.StatusCode == 400 {
+		var respErr registerError
+		if err := json.NewDecoder(resp.Body).Decode(&respErr); err != nil {
+			return err.Error(), nil
+			// panic(err.Error())
+		}
+		errMsg := strings.Split(respErr.Message, ":")
+		errMsgS := strings.Trim(errMsg[1], " ")
+		// fmt.Printf(errMsgS)
+		switch errMsgS {
+		// switch os := runtime.GOOS; os {
+		case "Not enough args":
+			log.Print("Unable to register Agent, see response below")
+			// log.Print("See response below")
+			log.Printf("Response code: %d", resp.StatusCode)
+			log.Fatalf("Response body: \"%s\"", respErr.Message)
+			return respErr.Message, err
+		}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "Failed", err
+		return "issue", err
 	}
-	bodyString := string(body)
-	return string(bodyString), nil
+	return strings.Trim(string(body), "\""), nil
 	// resp.Body.Close()
 	// json.NewDecoder(resp.Body).Decode(&result)
 
