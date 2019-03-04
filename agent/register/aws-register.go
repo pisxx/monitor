@@ -22,14 +22,14 @@ func RegisterAgent(agentIP string) (string, error) {
 
 	message := make(map[string]string)
 
-	Hostname, err := os.Hostname()
+	hostname, err := os.Hostname()
 	if err != nil {
 		panic(err)
 	}
 	// message["agentID"] = agentID
-	message["OS"] = runtime.GOOS
-	message["IP"] = agentIP
-	message["Hostname"] = Hostname
+	message["os"] = runtime.GOOS
+	message["ip"] = agentIP
+	message["hostname"] = hostname
 
 	messageBytes, err := json.Marshal(message)
 	if err != nil {
