@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"runtime"
 	"strings"
 )
 
-type registerError struct {
+type RegisterResponse struct {
 	Message string
+	// StatusCode int
 }
 
 const registerURL = "https://1iw0vyiwzc.execute-api.us-east-1.amazonaws.com/dev/register"
@@ -37,40 +37,46 @@ func RegisterAgent(agentIP string) (string, error) {
 	}
 	resp, err := http.Post(registerURL, "application/json", bytes.NewBuffer(messageBytes))
 	if err != nil {
-		return "Failed", err
+		return err.Error(), err
 	}
 	defer resp.Body.Close()
 
-	if err != nil {
-		return "error", err
-	}
-
 	// return string(body), nil
 	if resp.StatusCode == 400 {
-		var respErr registerError
+		var respErr RegisterResponse
 		if err := json.NewDecoder(resp.Body).Decode(&respErr); err != nil {
 			return err.Error(), nil
 			// panic(err.Error())
 		}
 		errMsg := strings.Split(respErr.Message, ":")
 		errMsgS := strings.Trim(errMsg[1], " ")
-		// fmt.Printf(errMsgS)
+		// fmt.Println(errMsg)
 		switch errMsgS {
 		// switch os := runtime.GOOS; os {
 		case "Not enough args":
-			log.Print("Unable to register Agent, see response below")
+			// log.Print("Unable to register Agent, see response below")
 			// log.Print("See response below")
-			log.Printf("Response code: %d", resp.StatusCode)
-			log.Fatalf("Response body: \"%s\"", respErr.Message)
+			// log.Printf("Response code: %d", resp.StatusCode)
+			// log.Fatalf("Response body: \"%s\"", respErr.Message)
+			return respErr.Message, err
+		case "127.0.0.1 is not allowed":
+			// log.Print("Unable to register agent, please use accesible ip")
+			// log.Printf("You may still check metrics at below ip:port")
+			// return "Unable to register agent, please use accesible ip", err
 			return respErr.Message, err
 		}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "issue", err
+		return err.Error(), err
 	}
-	return strings.Trim(string(body), "\""), nil
+	var registerResp RegisterResponse
+	if err := json.NewDecoder(body).Decode(&registerResp); err != nil {
+		return err.Error(), err
+	}
+	return registerResp.Message, nil
+	// return json.Unmarshal(body, RegisterResponse) nil
 	// resp.Body.Close()
 	// json.NewDecoder(resp.Body).Decode(&result)
 
