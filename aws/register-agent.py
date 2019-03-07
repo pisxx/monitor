@@ -17,9 +17,9 @@ def lambda_handler(event, context):
     hostname = event["hostname"]
     query_db = check_hostname(hostname)
     if query_db["Items"]:
-        # response["message"] = "Agent already registered with ID: {}".format(query_db["Items"][0]["id"])
-        return "Agent already registered with ID: {}".format(query_db["Items"][0]["id"])
-        # return response
+        response["message"] = "Agent already registered with ID: {}".format(query_db["Items"][0]["id"])
+        # return "Agent already registered with ID: {}".format(query_db["Items"][0]["id"])
+        return response
         # return json.dumps(response)
     id = str(uuid.uuid4())
     os = event["os"]
@@ -46,11 +46,11 @@ def lambda_handler(event, context):
     #     TopicArn = os.environ['SNS_TOPIC'],
     #     Message = recordId
     # )
-    # response["message"] = "Agent {} registered".format(id)
+    response["message"] = "Agent {} registered".format(id)
     # response["status_code"] = 200
     # json.dumps(response)
-    # return response
-    return "Agent {} registered".format(id)
+    return response
+    # return "Agent {} registered".format(id)
 
 
 def check_hostname(hostname):
