@@ -1,4 +1,4 @@
-package aws
+package utils
 
 import (
 	"github.com/aws/aws-sdk-go/aws"
@@ -26,7 +26,7 @@ func SendAgentsList(agentsList string, queue string) string {
 			},
 		},
 		// MessageGroupId: aws.String("100"),
-		MessageBody: aws.String("Agent to poll metrics from"),
+		MessageBody: aws.String("Poll from Agents"),
 		QueueUrl:    &qURL,
 	})
 
@@ -36,4 +36,8 @@ func SendAgentsList(agentsList string, queue string) string {
 	}
 
 	return *resultSQS.MessageId
+}
+
+func ParseMessage(messages) {
+
 }
