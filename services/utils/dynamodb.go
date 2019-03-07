@@ -16,6 +16,7 @@ type Item struct {
 	ID       string `json:"id"`
 	IP       string `json:"ip"`
 	OS       string `json:"os"`
+	Port     string `json:"port"`
 }
 
 func GetAgents(dbname string) string {
@@ -63,7 +64,8 @@ func GetAgents(dbname string) string {
 
 		// fmt.Println(item.Hostname)
 		// fmt.Println(item.IP)
-		listOfAgents = append(listOfAgents, item.IP)
+		ipPort := item.IP + ":" + item.Port
+		listOfAgents = append(listOfAgents, ipPort)
 
 	}
 	// fmt.Print(strings.Join(listOfAgents, ","))
