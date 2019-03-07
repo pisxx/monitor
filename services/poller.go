@@ -1,12 +1,16 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/pisxx/monitor/services/utils"
 )
 
 const (
@@ -46,17 +50,30 @@ func main() {
 		fmt.Println("Received no messages")
 		return
 	}
-	// var message sqs.Message
-	// sqs.
-	// json.Unmarshal([]byte(result.Messages[0]), &message)
-	// err = json.NewDecoder(result.Messages[0]).Decode(&message)
-	// if err != nil {
-	// 	log.Fatal(err.Error())
-	// 	// return nil, err
-	// }
 	listOfAgents := *result.Messages[0].MessageAttributes["ListOfAgents"].StringValue
 	// fmt.Printf("%v, %T", *result.Messages[0].MessageAttributes["ListOfAgents"].StringValue, result.Messages[0])
-	fmt.Print(strings.Split(listOfAgents, ","))
+	// fmt.Print(strings.Split(listOfAgents, ","))
 
-	// fmt.Println(message)
+	// Poll from agents
+	// var metricsSlice []utils.MetricsStruct
+	fmt.Println()
+	for _, i := range strings.Split(listOfAgents, ",") {
+		var metrics utils.MetricsStruct
+		fmt.Printf("Polling metrics from %s\n", i)
+		resp, err := http.Get("http://" + i)
+		if err != nil {
+			log.Fatal("Unable to poll metrics")
+		}
+		defer resp.Body.Close()
+
+		err = json.NewDecoder(resp.Body).Decode(&metrics)
+		if err != nil {
+			log.Fatal("issue")
+		}
+		for _, v := range metrics.Metrics {
+			fmt.Printf("%s: %s\t", v.Name, v.Value)
+		}
+		fmt.Println()
+		fmt.Println()
+	}
 }
