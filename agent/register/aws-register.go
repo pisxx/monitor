@@ -3,7 +3,6 @@ package register
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"runtime"
@@ -18,7 +17,7 @@ type RegisterResponse struct {
 const registerURL = "https://1iw0vyiwzc.execute-api.us-east-1.amazonaws.com/dev/register"
 
 // RegisterAgent - register agent in DynamoDB in AWS
-func RegisterAgent(agentIP string) (string, error) {
+func RegisterAgent(agentIP string, agentPort string) (string, error) {
 
 	message := make(map[string]string)
 
@@ -29,6 +28,7 @@ func RegisterAgent(agentIP string) (string, error) {
 	// message["agentID"] = agentID
 	message["os"] = runtime.GOOS
 	message["ip"] = agentIP
+	message["port"] = agentPort
 	message["hostname"] = hostname
 
 	messageBytes, err := json.Marshal(message)
@@ -67,12 +67,8 @@ func RegisterAgent(agentIP string) (string, error) {
 		}
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err.Error(), err
-	}
 	var registerResp RegisterResponse
-	if err := json.NewDecoder(body).Decode(&registerResp); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&registerResp); err != nil {
 		return err.Error(), err
 	}
 	return registerResp.Message, nil
