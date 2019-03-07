@@ -12,7 +12,7 @@ class RegisterException(Exception):
 
 def lambda_handler(event, context):
 
-    if len(event) != 3:
+    if len(event) != 4:
         raise RegisterException("Bad Request: Not enough args")
     hostname = event["hostname"]
     query_db = check_hostname(hostname)
@@ -24,6 +24,7 @@ def lambda_handler(event, context):
     id = str(uuid.uuid4())
     os = event["os"]
     ip = event["ip"]
+    port = event["port"]
     if ip == "127.0.0.1":
         raise RegisterException("Bad Request: 127.0.0.1 is not allowed")
     print('Registering new Agent, with ID: ' + id)
@@ -36,7 +37,8 @@ def lambda_handler(event, context):
             'id' : id,
             'hostname': hostname,
             'os': os,
-            'ip': ip
+            'ip': ip,
+            'port': port
         }
     )
     

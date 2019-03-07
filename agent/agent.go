@@ -18,7 +18,7 @@ func main() {
 	ipPort := *ip + ":" + *port
 	// fmt.Print(flag.Args())
 	// register.ConsulRegister("23", *ip)
-	reg, err := register.RegisterAgent(*ip)
+	reg, err := register.RegisterAgent(*ip, *port)
 	if err != nil {
 		log.Fatal(err)
 	}
