@@ -3,7 +3,7 @@ package register
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"runtime"
@@ -63,16 +63,17 @@ func RegisterAgent(agentIP string) (string, error) {
 			// log.Print("Unable to register agent, please use accesible ip")
 			// log.Printf("You may still check metrics at below ip:port")
 			// return "Unable to register agent, please use accesible ip", err
+			log.Printf("Unable to register")
 			return respErr.Message, err
 		}
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err.Error(), err
-	}
+	// body, err := ioutil.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return err.Error(), err
+	// }
 	var registerResp RegisterResponse
-	if err := json.NewDecoder(body).Decode(&registerResp); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&registerResp); err != nil {
 		return err.Error(), err
 	}
 	return registerResp.Message, nil
