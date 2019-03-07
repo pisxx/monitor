@@ -6,4 +6,4 @@ agent
 register/aws-register
 register/consul-register
 metrics/net
-aws/update-lambda.sh
+aws-integration/update-lambda.sh
