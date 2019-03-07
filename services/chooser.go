@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
-	aws "github.com/pisxx/monitor/services/utils"
+	"github.com/pisxx/monitor/services/utils"
 )
 
 const (
-	qURL = "https://sqs.us-east-1.amazonaws.com/953738548419/puller-queue"
+	qURL = "https://sqs.us-east-1.amazonaws.com/953738548419/chooser-queue"
 )
 
 func main() {
