@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/pisxx/monitor/services/utils"
 )
@@ -19,6 +20,13 @@ func main() {
 }
 
 func poll() {
-	metrics := utils.GetAgentsList(chooserQURL)
-	fmt.Println(metrics)
+	fmt.Printf("Getting list of Agents from SQS\n")
+	listOfAgnets, messageID := utils.GetAgentsList(chooserQURL)
+	fmt.Printf("List of agents to poll metrics from: %v\n", listOfAgnets)
+	// fmt.Println(*messageID)
+	err := utils.DeleteMessage(messageID, chooserQURL)
+	if err != nil {
+		log.Printf("Unable to delete message %s", *messageID)
+	}
+	utils.PollMetrics(chooserQURL, listOfAgnets)
 }
