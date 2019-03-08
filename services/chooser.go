@@ -23,5 +23,6 @@ func forever() {
 		sendMessage := utils.SendAgentsList(agents, qURL)
 		log.Printf("Message sent: %s", sendMessage)
 		time.Sleep(5 * time.Second)
+		fmt.Errorf(format string, a ...interface{})
 	}
 }
