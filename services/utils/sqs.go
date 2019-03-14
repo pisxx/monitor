@@ -41,7 +41,6 @@ func SendAgentsList(agentsList string, queue string) string {
 
 	return *resultSQS.MessageId
 }
-<<<<<<< HEAD
 
 // GetAgentsList - Get list of agents to poll metrics from
 func GetAgentsList(queue string) ([]string, *string) {
@@ -109,5 +108,3 @@ func DeleteMessage(messageID *string, qURL string) error {
 	// fmt.Println("Deleted message from queue")
 	return nil
 }
-=======
->>>>>>> 73b9bca7530c89264b2f6b0fc358502ad980ceb8
