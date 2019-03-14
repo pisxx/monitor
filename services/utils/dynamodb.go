@@ -64,8 +64,9 @@ func GetAgents(dbname string) string {
 
 		// fmt.Println(item.Hostname)
 		// fmt.Println(item.IP)
-		ipPort := item.IP + ":" + item.Port
+		ipPort := item.Hostname + ":" + item.Port
 		listOfAgents = append(listOfAgents, ipPort)
+		break
 
 	}
 	// fmt.Print(strings.Join(listOfAgents, ","))
