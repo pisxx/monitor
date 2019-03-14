@@ -37,7 +37,3 @@ func SendAgentsList(agentsList string, queue string) string {
 
 	return *resultSQS.MessageId
 }
-
-func ParseMessage(messages) {
-
-}
