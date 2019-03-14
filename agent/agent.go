@@ -10,7 +10,7 @@ import (
 	"github.com/pisxx/monitor/agent/web"
 )
 
-var ip = flag.String("ip", "127.0.0.1", "IP on which agent will listen")
+var ip = flag.String("ip", "0.0.0.0", "IP on which agent will listen")
 var port = flag.String("p", "10808", "Port on which agent will listen")
 
 func main() {
