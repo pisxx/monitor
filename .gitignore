@@ -7,3 +7,5 @@ register/aws-register
 register/consul-register
 metrics/net
 aws-integration/update-lambda.sh
+services/poller-linux
+services/chooser-linux
