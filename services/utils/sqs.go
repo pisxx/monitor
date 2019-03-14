@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"os"
+	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -71,15 +71,22 @@ func GetAgentsList(queue string) ([]string, *string) {
 	}
 
 	if len(result.Messages) == 0 {
-		fmt.Println("Received no messages")
+		// fmt.Println("Received no messages")
+		log.Println("Received no messages")
+		// var message *string
+		message := "Received no messages"
+		return nil, &message
 		// panic(err.Error())
-		os.Exit(1)
+		// os.Exit(1)
 	}
-	listOfAgents := *result.Messages[0].MessageAttributes["ListOfAgents"].StringValue
-	// fmt.Printf("%v, %T", *result.Messages[0].MessageAttributes["ListOfAgents"].StringValue, result.Messages[0])
-	// fmt.Print(strings.Split(listOfAgents, ","))
-	listOfAgentsSplitted := strings.Split(listOfAgents, ",")
-	return listOfAgentsSplitted, result.Messages[0].ReceiptHandle
+	if len(result.Messages) != 0 {
+		listOfAgents := *result.Messages[0].MessageAttributes["ListOfAgents"].StringValue
+		// fmt.Printf("%v, %T", *result.Messages[0].MessageAttributes["ListOfAgents"].StringValue, result.Messages[0])
+		// fmt.Print(strings.Split(listOfAgents, ","))
+		listOfAgentsSplitted := strings.Split(listOfAgents, ",")
+		return listOfAgentsSplitted, result.Messages[0].ReceiptHandle
+	}
+	return nil, nil
 }
 
 func DeleteMessage(messageID *string, qURL string) error {
