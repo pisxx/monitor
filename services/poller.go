@@ -19,7 +19,8 @@ func main() {
 	// go poll()
 	// select {}
 	http.HandleFunc("/", poll)
-	log.Fatal(http.ListenAndServe("0:9000", nil))
+	log.Print("Listening on 0.0.0.0:9000")
+	log.Fatal(http.ListenAndServe("0.0.0.0:9000", nil))
 
 }
 
