@@ -14,8 +14,11 @@ const (
 )
 
 func main() {
+	ip := "0.0.0.0"
+	port := "9001"
 	http.HandleFunc("/choose", choose)
-	log.Fatal(http.ListenAndServe("0:9001", nil))
+	log.Printf("Listening in %s:%s", ip, port)
+	log.Fatal(http.ListenAndServe(ip+":"+port, nil))
 	// go forever()
 	// select {}
 }
