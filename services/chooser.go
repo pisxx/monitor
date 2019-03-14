@@ -16,7 +16,7 @@ const (
 func main() {
 	ip := "0.0.0.0"
 	port := "9001"
-	http.HandleFunc("/choose", choose)
+	http.HandleFunc("/", choose)
 	log.Printf("Listening in %s:%s", ip, port)
 	log.Fatal(http.ListenAndServe(ip+":"+port, nil))
 	// go forever()
@@ -25,10 +25,10 @@ func main() {
 
 func choose(w http.ResponseWriter, req *http.Request) {
 	// for {
-	agents := utils.GetAgents("agents_hostname")
+	agents := utils.DBGetAgents("agents_hostname")
 	log.Printf("List of agents to send %s", agents)
 	fmt.Fprintf(w, "List of agents to send %s\n", agents)
-	sendMessage := utils.SendAgentsList(agents, qURL)
+	sendMessage := utils.SQSSendAgentsList(agents, qURL)
 	log.Printf("Message sent: %s", sendMessage)
 	fmt.Fprintf(w, "Message sent: %v", sendMessage)
 	time.Sleep(5 * time.Second)
