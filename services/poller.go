@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/pisxx/monitor/services/utils"
@@ -14,22 +15,29 @@ const (
 )
 
 func main() {
-	go poll()
-	select {}
+
+	// go poll()
+	// select {}
+	http.HandleFunc("/", poll)
+	log.Fatal(http.ListenAndServe("0:9000", nil))
 
 }
 
-func poll() {
+func poll(w http.ResponseWriter, req *http.Request) {
 	for {
-		fmt.Printf("Getting list of Agents from SQS\n")
+		// fmt.Fprintf("Getting list of Agents from SQS\n")
 		listOfAgnets, messageID := utils.GetAgentsList(chooserQURL)
-		fmt.Printf("List of agents to poll metrics from: %v\n", listOfAgnets)
+		if *messageID == "Received no messages" {
+			fmt.Fprintf(w, "Received no messages")
+			return
+		}
+		fmt.Fprintf(w, "List of agents to poll metrics from: %v\n", listOfAgnets)
 		// fmt.Println(*messageID)
 		err := utils.DeleteMessage(messageID, chooserQURL)
 		if err != nil {
-			log.Printf("Unable to delete message %s", *messageID)
+			fmt.Fprintf(w, "Unable to delete message %s", *messageID)
 		}
 		utils.PollMetrics(chooserQURL, listOfAgnets)
-		time.Sleep(3 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }
