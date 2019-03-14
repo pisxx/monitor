@@ -27,7 +27,7 @@ func poll(w http.ResponseWriter, req *http.Request) {
 
 	// for {
 	log.Print("Getting list of Agents from SQS\n")
-	listOfAgnets, messageID := utils.GetAgentsList(chooserQURL)
+	listOfAgnets, messageID := utils.SQSGetAgentsList(chooserQURL)
 	if *messageID == "Received no messages" {
 		fmt.Fprintf(w, "Received no messages")
 		return

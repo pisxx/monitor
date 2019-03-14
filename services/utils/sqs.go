@@ -11,10 +11,14 @@ import (
 )
 
 // SendAgentsList - sends list of agents to provided queue on SQS
-func SendAgentsList(agentsList string, queue string) string {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+func SQSSendAgentsList(agentsList string, queue string) string {
+	// sess := session.Must(session.NewSessionWithOptions(session.Options{
+	// 	SharedConfigState: session.SharedConfigEnable,
+	// }))
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1")},
+	))
+	// sess.Config['Region'] = "us-east-1"
 	svcSQS := sqs.New(sess)
 
 	// URL to our queue
@@ -43,10 +47,13 @@ func SendAgentsList(agentsList string, queue string) string {
 }
 
 // GetAgentsList - Get list of agents to poll metrics from
-func GetAgentsList(queue string) ([]string, *string) {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+func SQSGetAgentsList(queue string) ([]string, *string) {
+	// sess := session.Must(session.NewSessionWithOptions(session.Options{
+	// 	SharedConfigState: session.SharedConfigEnable,
+	// }))
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1")},
+	))
 
 	svc := sqs.New(sess)
 
@@ -90,9 +97,13 @@ func GetAgentsList(queue string) ([]string, *string) {
 }
 
 func DeleteMessage(messageID *string, qURL string) error {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	// sess := session.Must(session.NewSessionWithOptions(session.Options{
+	// 	SharedConfigState: session.SharedConfigEnable,
+	// }))
+
+	sess := session.Must(session.NewSession(&aws.Config{
+		Region: aws.String("us-east-1")},
+	))
 
 	svc := sqs.New(sess)
 

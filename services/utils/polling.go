@@ -9,12 +9,12 @@ import (
 
 type metricsMap map[string]string
 
-func PollMetrics(qURL string, agents []string) []metricsMap {
+func PollMetrics(qURL string, agents []string) metricsMap {
 	// Poll from agents
 	// var metricsSlice []utils.MetricsStruct
 	fmt.Println()
 	// type M map[string]string
-	metricsMapList := make([]metricsMap, 3)
+	// metricsMapList := make([]metricsMap, 3)
 	// var metricsMap M
 	// metricsMap := make(map[string]string)
 	metricsMap := make(metricsMap)
@@ -35,12 +35,14 @@ func PollMetrics(qURL string, agents []string) []metricsMap {
 		for _, v := range metrics.Metrics {
 			fmt.Printf("%s: %s\t", v.Name, v.Value)
 			metricsMap[v.Name] = v.Value
-			metricsMapList = append(metricsMapList, metricsMap)
+			// metricsMapList = append(metricsMapList, metricsMap)
 		}
 		fmt.Println()
 		fmt.Println()
 	}
 	// fmt.Println(message)
+	fmt.Print(metricsMap)
 	// fmt.Fprint(w, "Metrics polled, deleting poll request from SQS")
-	return metricsMapList
+	// return metricsMapList
+	return metricsMap
 }

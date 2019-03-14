@@ -19,7 +19,7 @@ type Item struct {
 	Port     string `json:"port"`
 }
 
-func GetAgents(dbname string) string {
+func DBGetAgents(dbname string) string {
 	// Initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
 	sess, err := session.NewSession(&aws.Config{
