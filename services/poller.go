@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/pisxx/monitor/services/utils"
 )
@@ -25,20 +24,22 @@ func main() {
 }
 
 func poll(w http.ResponseWriter, req *http.Request) {
-	for {
-		// fmt.Fprintf("Getting list of Agents from SQS\n")
-		listOfAgnets, messageID := utils.GetAgentsList(chooserQURL)
-		if *messageID == "Received no messages" {
-			fmt.Fprintf(w, "Received no messages")
-			return
-		}
-		fmt.Fprintf(w, "List of agents to poll metrics from: %v\n", listOfAgnets)
-		// fmt.Println(*messageID)
-		err := utils.DeleteMessage(messageID, chooserQURL)
-		if err != nil {
-			fmt.Fprintf(w, "Unable to delete message %s", *messageID)
-		}
-		utils.PollMetrics(chooserQURL, listOfAgnets)
-		time.Sleep(5 * time.Second)
+
+	// for {
+	log.Print("Getting list of Agents from SQS\n")
+	listOfAgnets, messageID := utils.GetAgentsList(chooserQURL)
+	if *messageID == "Received no messages" {
+		fmt.Fprintf(w, "Received no messages")
+		return
 	}
+	fmt.Fprintf(w, "List of agents to poll metrics from: %v\n", listOfAgnets)
+	// fmt.Println(*messageID)
+	err := utils.DeleteMessage(messageID, chooserQURL)
+	if err != nil {
+		fmt.Fprintf(w, "Unable to delete message %s", *messageID)
+	}
+	metrics := utils.PollMetrics(chooserQURL, listOfAgnets)
+	fmt.Fprint(w, metrics)
+	// time.Sleep(5 * time.Second)
+	// }
 }
