@@ -27,6 +27,7 @@ func PollMetrics(agents []string) (metricsMapList, error) {
 		Timeout: timeout,
 	}
 	for _, i := range agents {
+		
 		var metrics MetricsStruct
 		metricsMap := make(metricsMap)
 		log.Printf("Polling metrics from %s\n", i)
