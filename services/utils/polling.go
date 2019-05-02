@@ -5,44 +5,64 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
-type metricsMap map[string]string
+type metricsMapFor map[string]string
+type metricsMap map[string]interface{}
+type metricsMapList []MetricsMap
 
-func PollMetrics(qURL string, agents []string) metricsMap {
+func PollMetrics(agents []string) (metricsMapList, error) {
 	// Poll from agents
 	// var metricsSlice []utils.MetricsStruct
 	fmt.Println()
 	// type M map[string]string
-	// metricsMapList := make([]metricsMap, 3)
+	metricsMapList := make([]metricsMap, 0)
 	// var metricsMap M
 	// metricsMap := make(map[string]string)
-	metricsMap := make(metricsMap)
+	// metricsMap := make(MetricsMap)
+	metricsMapFor := make(metricsMapFor)
+	timeout := time.Duration(2 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
 	for _, i := range agents {
 		var metrics MetricsStruct
-		fmt.Printf("Polling metrics from %s\n", i)
-		resp, err := http.Get("http://" + i)
+		metricsMap := make(metricsMap)
+		log.Printf("Polling metrics from %s\n", i)
+		metricsMap["agent"] = i
+		resp, err := client.Get("http://" + i)
 		if err != nil {
 			log.Print("Unable to poll metrics")
-			return nil
+			log.Print(err)
+			metricsMap["status"] = err.Error()
+			metricsMapList = append(metricsMapList, metricsMap)
+			continue
 		}
 		defer resp.Body.Close()
 
 		err = json.NewDecoder(resp.Body).Decode(&metrics)
 		if err != nil {
-			log.Fatal("issue")
+			// log.Fatal("issue")
+			return nil, err
+
 		}
 		for _, v := range metrics.Metrics {
 			fmt.Printf("%s: %s\t", v.Name, v.Value)
-			metricsMap[v.Name] = v.Value
+			metricsMapFor[v.Name] = v.Value
 			// metricsMapList = append(metricsMapList, metricsMap)
 		}
+		metricsMap["metrics"] = metricsMapFor
 		fmt.Println()
 		fmt.Println()
+		// metricsMapList = append(metricsMapList, metricsMap)
+		resp.Body.Close()
 	}
 	// fmt.Println(message)
-	fmt.Print(metricsMap)
+	// log.Print("-------- After loop ---------")
+	// log.Print("Length of MetricsMap -> ", len(metricsMapList))
+	log.Print(metricsMapList)
 	// fmt.Fprint(w, "Metrics polled, deleting poll request from SQS")
 	// return metricsMapList
-	return metricsMap
+	return metricsMapList, nil
 }

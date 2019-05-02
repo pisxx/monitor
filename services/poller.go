@@ -1,3 +1,10 @@
+// Poller Service
+// This service queries SQS queue to get list of agents
+// Based on the returned message it will try to access agent http endpoint to get metrics
+// Service will use agent hostname field from SQS message
+// It listens on port 9002
+// To trigger polling you need to send GET to http://<ip>:9002
+
 package main
 
 import (
@@ -15,11 +22,11 @@ const (
 
 func main() {
 
-	// go poll()
-	// select {}
+	ip := "0.0.0.0"
+	port := "9002"
 	http.HandleFunc("/", poll)
-	log.Print("Listening on 0.0.0.0:9000")
-	log.Fatal(http.ListenAndServe("0.0.0.0:9000", nil))
+	log.Printf("Listening in %s:%s", ip, port)
+	log.Fatal(http.ListenAndServe(ip+":"+port, nil))
 
 }
 
@@ -27,19 +34,25 @@ func poll(w http.ResponseWriter, req *http.Request) {
 
 	// for {
 	log.Print("Getting list of Agents from SQS\n")
-	listOfAgnets, messageID := utils.SQSGetAgentsList(chooserQURL)
+	agents, messageID := utils.SQSGetAgentsList(chooserQURL)
 	if *messageID == "Received no messages" {
-		fmt.Fprintf(w, "Received no messages")
+		fmt.Fprintf(w, "Received no polling requests")
 		return
 	}
-	fmt.Fprintf(w, "List of agents to poll metrics from: %v\n", listOfAgnets)
+	// agents = []string{"onet.pl:10808"}
+	fmt.Fprintf(w, "Polling metrics from: %v\n", agents)
 	// fmt.Println(*messageID)
+
+	metrics, _ := utils.PollMetrics(agents)
+	// if err != nil {
+	// 	fmt.Fprint(w, err.Error())
+	// 	return
+	// }
+	fmt.Fprint(w, metrics)
 	err := utils.DeleteMessage(messageID, chooserQURL)
 	if err != nil {
-		fmt.Fprintf(w, "Unable to delete message %s", *messageID)
+		fmt.Fprintf(w, "Unable to poll  %s", *messageID)
 	}
-	metrics := utils.PollMetrics(chooserQURL, listOfAgnets)
-	fmt.Fprint(w, metrics)
 	// time.Sleep(5 * time.Second)
 	// }
 }
