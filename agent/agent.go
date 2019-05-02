@@ -18,13 +18,14 @@ import (
 
 var ip = flag.String("ip", "0.0.0.0", "IP on which agent will listen")
 var port = flag.String("p", "10808", "Port on which agent will listen")
+var env = flag.String("e", "docker", "runing on docker or VM")
 
 func main() {
 	flag.Parse()
 	ipPort := *ip + ":" + *port
 	// fmt.Print(flag.Args())
 	// register.ConsulRegister("23", *ip)
-	reg, err := register.RegisterAgent(*ip, *port)
+	reg, err := register.RegisterAgent(*ip, *port, *env)
 	if err != nil {
 		log.Fatal(err)
 	}

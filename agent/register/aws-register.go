@@ -18,7 +18,7 @@ type RegisterResponse struct {
 const registerURL = "https://1iw0vyiwzc.execute-api.us-east-1.amazonaws.com/dev/register"
 
 // RegisterAgent - register agent in DynamoDB in AWS
-func RegisterAgent(agentIP string, agentPort string) (string, error) {
+func RegisterAgent(agentIP string, agentPort string, agentEnv string) (string, error) {
 
 	message := make(map[string]string)
 
@@ -31,6 +31,7 @@ func RegisterAgent(agentIP string, agentPort string) (string, error) {
 	message["ip"] = agentIP
 	message["port"] = agentPort
 	message["hostname"] = hostname
+	message["env"] = agentEnv
 
 	messageBytes, err := json.Marshal(message)
 	if err != nil {

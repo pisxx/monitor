@@ -12,7 +12,7 @@ class RegisterException(Exception):
 
 def lambda_handler(event, context):
 
-    if len(event) != 4:
+    if len(event) != 5:
         raise RegisterException("Bad Request: Not enough args")
     hostname = event["hostname"]
     query_db = check_hostname(hostname)
@@ -25,6 +25,7 @@ def lambda_handler(event, context):
     os = event["os"]
     ip = event["ip"]
     port = event["port"]
+    env = event["env"]
     if ip == "127.0.0.1":
         raise RegisterException("Bad Request: 127.0.0.1 is not allowed")
     print('Registering new Agent, with ID: ' + id)
@@ -34,11 +35,12 @@ def lambda_handler(event, context):
     table = dynamodb.Table("agents_hostname")
     table.put_item(
         Item={
-            'id' : id,
+            # 'id' : id,
             'hostname': hostname,
             'os': os,
             'ip': ip,
-            'port': port
+            'port': port,
+            'env' : env
         }
     )
     
