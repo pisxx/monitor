@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -19,7 +18,7 @@ type Item struct {
 	Port     string `json:"port"`
 }
 
-func DBGetAgents(dbname string) string {
+func DBGetAgents(dbname string, count int) []string {
 	// Initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
 	sess, err := session.NewSession(&aws.Config{
@@ -50,12 +49,12 @@ func DBGetAgents(dbname string) string {
 
 	// fmt.Print(result)
 
-	var listOfAgents []string
+	var agents []string
 
-	for _, i := range result.Items {
+	for i, res := range result.Items {
 		item := Item{}
 
-		err = dynamodbattribute.UnmarshalMap(i, &item)
+		err = dynamodbattribute.UnmarshalMap(res, &item)
 		if err != nil {
 			fmt.Println("Got error unmarshalling:")
 			fmt.Println(err.Error())
@@ -65,11 +64,16 @@ func DBGetAgents(dbname string) string {
 		// fmt.Println(item.Hostname)
 		// fmt.Println(item.IP)
 		ipPort := item.Hostname + ":" + item.Port
-		listOfAgents = append(listOfAgents, ipPort)
-		break
-
+		agents = append(agents, ipPort)
+		// To get only one entry
+		// break
+		if count != -1 {
+			if i == (count - 1) {
+				break
+			}
+		}
 	}
 	// fmt.Print(strings.Join(listOfAgents, ","))
-	listOfAgentsJoined := strings.Join(listOfAgents, ",")
-	return listOfAgentsJoined
+	// listOfAgentsJoined := strings.Join(listOfAgents, ",")
+	return agents
 }
