@@ -1,3 +1,9 @@
+// Monitor agent
+// Gets simple metrics from OS on which it is running those can be accessd via http page
+// Listens on 0.0.0.0:10808 by default
+// After startup it will register in AWS DynamoDB providing hostname, os, ip and port
+//
+
 package main
 
 import (
