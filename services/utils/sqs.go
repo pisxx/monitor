@@ -11,7 +11,7 @@ import (
 )
 
 // SendAgentsList - sends list of agents to provided queue on SQS
-func SQSSendAgentsList(agents []string, queue string) string {
+func SQSSendAgentsList(agents map[string]string, queue string) string {
 	// sess := session.Must(session.NewSessionWithOptions(session.Options{
 	// 	SharedConfigState: session.SharedConfigEnable,
 	// }))
@@ -23,7 +23,18 @@ func SQSSendAgentsList(agents []string, queue string) string {
 
 	// URL to our queue
 	qURL := queue
-	agentsList := strings.Join(agents, ",")
+
+	agentsHostnameIpPort := make([]string, 0)
+	for k, v := range agents {
+		hostnameIpPort := k + ";" + v
+		fmt.Println(hostnameIpPort)
+		agentsHostnameIpPort = append(agentsHostnameIpPort, hostnameIpPort)
+
+	}
+	// fmt.Println(agentsHostnameIpPort)
+	agentsList := strings.Join(agentsHostnameIpPort, ",")
+	// fmt.Println(agentList)
+	// agentsList := strings.Join(agents, ",")
 	resultSQS, err := svcSQS.SendMessage(&sqs.SendMessageInput{
 		DelaySeconds: aws.Int64(0),
 		MessageAttributes: map[string]*sqs.MessageAttributeValue{

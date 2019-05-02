@@ -18,7 +18,7 @@ type Item struct {
 	Port     string `json:"port"`
 }
 
-func DBGetAgents(dbname string, count int) []string {
+func DBGetAgents(dbname string, count int) map[string]string {
 	// Initialize a session in us-west-2 that the SDK will use to load
 	// credentials from the shared credentials file ~/.aws/credentials.
 	sess, err := session.NewSession(&aws.Config{
@@ -49,7 +49,8 @@ func DBGetAgents(dbname string, count int) []string {
 
 	// fmt.Print(result)
 
-	var agents []string
+	// var agents [][]string
+	agents := make(map[string]string, 0)
 
 	for i, res := range result.Items {
 		item := Item{}
@@ -63,8 +64,10 @@ func DBGetAgents(dbname string, count int) []string {
 
 		// fmt.Println(item.Hostname)
 		// fmt.Println(item.IP)
-		ipPort := item.Hostname + ":" + item.Port
-		agents = append(agents, ipPort)
+		// hostname := item.Hostname
+		ipPort := item.IP + ":" + item.Port
+		// agents = append(agents, ipPort)
+		agents[item.Hostname] = ipPort
 		// To get only one entry
 		// break
 		if count != -1 {

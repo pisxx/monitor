@@ -10,7 +10,7 @@ import (
 
 type metricsMapFor map[string]string
 type metricsMap map[string]interface{}
-type metricsMapList []MetricsMap
+type metricsMapList []metricsMap
 
 func PollMetrics(agents []string) (metricsMapList, error) {
 	// Poll from agents
