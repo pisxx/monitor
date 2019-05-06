@@ -27,6 +27,12 @@ func RegisterAgent(agentIP string, agentPort string, agentEnv string) (string, e
 		panic(err)
 	}
 	// message["agentID"] = agentID
+	publicIP := getAWSPublicIP()
+	if publicIP != "NOT AWS" {
+		message["public_ip"] = publicIP
+	} else {
+		message["public_ip"] = "NA"
+	}
 	message["os"] = runtime.GOOS
 	message["ip"] = agentIP
 	message["port"] = agentPort

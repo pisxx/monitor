@@ -12,7 +12,7 @@ class RegisterException(Exception):
 
 def lambda_handler(event, context):
 
-    if len(event) != 5:
+    if len(event) != 6:
         raise RegisterException("Bad Request: Not enough args")
     hostname = event["hostname"]
     query_db = check_hostname(hostname)
@@ -24,6 +24,7 @@ def lambda_handler(event, context):
     id = str(uuid.uuid4())
     os = event["os"]
     ip = event["ip"]
+    public_ip = event["public_ip"]
     port = event["port"]
     env = event["env"]
     if ip == "127.0.0.1":
@@ -39,6 +40,7 @@ def lambda_handler(event, context):
             'hostname': hostname,
             'os': os,
             'ip': ip,
+            'public_ip': public_ip,
             'port': port,
             'env' : env
         }
