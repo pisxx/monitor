@@ -42,13 +42,38 @@ func poll(w http.ResponseWriter, req *http.Request) {
 	// agents = []string{"onet.pl:10808"}
 	fmt.Fprintf(w, "Polling metrics from: %v\n", agents)
 	// fmt.Println(*messageID)
-
-	metrics, _ := utils.PollMetrics(agents)
+	agentsDetailsMap := utils.DBGetAgentsDetailed("agents_hostname", -1)
+	// log.Print("Agents Details ", agentsDetailsMap)
+	metrics, _ := utils.PollMetrics(agentsDetailsMap)
 	// if err != nil {
 	// 	fmt.Fprint(w, err.Error())
 	// 	return
 	// }
-	fmt.Fprint(w, metrics)
+	// fmt.Fprint(w, metrics)
+	// fmt.Fprint(w, "-----------------")
+	for agent := range metrics {
+		fmt.Fprint(w, "\n=====================================\n")
+		fmt.Fprintf(w, "Metrics from %s\n", agent)
+		metricsMap := metrics[agent]
+		// fmt.Fprint(w, metricsMap)
+		for k, v := range metricsMap {
+			fmt.Fprintf(w, "%s: %s\n", k, v)
+		}
+
+	}
+	fmt.Fprint(w, "=====================================")
+	// for _, agent := range agents {
+	// 	fmt.Fprintf(w, "Metrics from %s\n", agent)
+	// 	for _, metric := range metrics {
+	// 		if metric["hostname"] == agent {
+	// 			fmt.Fprint(w, metric)
+	// 		} else {
+	// 			fmt.Fprint(w, metric)
+	// 		}
+	// 	}
+	// 	// fmt.Fprint(w, metric)
+	// 	fmt.Fprint(w, "\n")
+	// }
 	err := utils.DeleteMessage(messageID, chooserQURL)
 	if err != nil {
 		fmt.Fprintf(w, "Unable to poll  %s", *messageID)
